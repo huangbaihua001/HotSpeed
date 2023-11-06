@@ -1,0 +1,8 @@
+plugins:
+  - prettier-plugin-java
+overrides:
+  - files:
+      - "*.java"
+      - "*.kt"
+    options:
+      printWidth: 90
