@@ -10,7 +10,7 @@ public class WatchFactoryTest {
   Logger logger = Logger.getInstance(this.getClass());
 
   @Test
-  public void testGetWatcherIsNotNull() throws Exception {
+  public void whenGetWatcher_thenSuccess() throws Exception {
     logger.debug("---------------testGetWatcher---------------");
     assertNotNull(new WatcherFactory().getWatcher());
   }

@@ -30,7 +30,7 @@ public class WatcherNIO2Test {
   }
 
   @Test
-  public void testCreateFileAndEventListenerCalled() throws Exception {
+  public void whenCreateFileEventListenerCalled_thenSuccess() throws Exception {
     final ResultHolder resultHolder = new ResultHolder();
     assertNotNull(watcher);
     assertNotNull(temp);
