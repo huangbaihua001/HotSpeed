@@ -16,14 +16,12 @@
  * You should have received a copy of the GNU General Public License along
  * with HotswapAgent. If not, see http://www.gnu.org/licenses/.
  */
-package com.github.hbh.hotspeed.watch.nio;
+package com.github.hbh.hotspeed.watch;
 
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
-import com.github.hbh.hotspeed.watch.FileEvent;
-import com.github.hbh.hotspeed.watch.WatchFileEvent;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;

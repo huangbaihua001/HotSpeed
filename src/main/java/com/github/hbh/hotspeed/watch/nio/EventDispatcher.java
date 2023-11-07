@@ -18,6 +18,7 @@
  */
 package com.github.hbh.hotspeed.watch.nio;
 
+import com.github.hbh.hotspeed.watch.HotSpeedWatchFileEvent;
 import com.github.hbh.hotspeed.watch.WatchEventListener;
 import com.github.hbh.hotspeed.watch.WatchFileEvent;
 import com.intellij.openapi.diagnostic.Logger;
