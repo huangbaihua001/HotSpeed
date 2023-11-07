@@ -134,7 +134,6 @@ public class EventDispatcher implements Runnable {
       try {
         Thread.sleep(50);
       } catch (InterruptedException e1) {
-        // TODO Auto-generated catch block
         return;
       }
     }
