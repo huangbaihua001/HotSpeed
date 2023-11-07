@@ -168,7 +168,7 @@ public class EventDispatcher implements Runnable {
       if (path.startsWith(list.getKey())) {
         matchedOne = true;
         for (WatchEventListener listener : new ArrayList<>(list.getValue())) {
-          WatchFileEvent agentEvent = new HotswapWatchFileEvent(event, path);
+          WatchFileEvent agentEvent = new HotSpeedWatchFileEvent(event, path);
           try {
             listener.onEvent(agentEvent);
           } catch (Throwable e) {

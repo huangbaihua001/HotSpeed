@@ -32,12 +32,12 @@ import java.nio.file.WatchEvent;
 /**
  * Filesystem event.
  */
-public class HotswapWatchFileEvent implements WatchFileEvent {
+public class HotSpeedWatchFileEvent implements WatchFileEvent {
 
   private final WatchEvent<?> event;
   private final Path path;
 
-  public HotswapWatchFileEvent(WatchEvent<?> event, Path path) {
+  public HotSpeedWatchFileEvent(WatchEvent<?> event, Path path) {
     this.event = event;
     this.path = path;
   }
@@ -77,7 +77,7 @@ public class HotswapWatchFileEvent implements WatchFileEvent {
       return false;
     }
 
-    HotswapWatchFileEvent that = (HotswapWatchFileEvent) o;
+    HotSpeedWatchFileEvent that = (HotSpeedWatchFileEvent) o;
 
     if (!event.equals(that.event)) {
       return false;
