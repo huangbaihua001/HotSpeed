@@ -20,48 +20,48 @@ package com.github.hbh.hotspeed.watch.nio;
 
 import com.github.hbh.hotspeed.watch.WatchEventListener;
 import com.github.hbh.hotspeed.watch.WatchFileEvent;
+import com.intellij.openapi.diagnostic.Logger;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * The EventDispatcher holds a queue of all events collected by the watcher but
- * not yet processed. It runs on its own thread and is responsible for calling
- * all the registered listeners.
- *
- * Since file system events can spawn too fast, this implementation works as
- * buffer for fast spawning events. The watcher is now responsible for
- * collecting and pushing events in this queue.
- *
+ * The EventDispatcher holds a queue of all events collected by the watcher but not yet processed.
+ * It runs on its own thread and is responsible for calling all the registered listeners.
+ * <p>
+ * Since file system events can spawn too fast, this implementation works as buffer for fast
+ * spawning events. The watcher is now responsible for collecting and pushing events in this queue.
  */
 public class EventDispatcher implements Runnable {
 
-  /** The logger. */
-  protected Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+  /**
+   * The logger.
+   */
+  protected Logger LOGGER = Logger.getInstance(this.getClass());
 
   /**
    * The Class Event.
    */
   static class Event {
 
-    /** The event. */
+    /**
+     * The event.
+     */
     final WatchEvent<Path> event;
 
-    /** The path. */
+    /**
+     * The path.
+     */
     final Path path;
 
     /**
      * Instantiates a new event.
      *
-     * @param event
-     *            the event
-     * @param path
-     *            the path
+     * @param event the event
+     * @param path  the path
      */
     public Event(WatchEvent<Path> event, Path path) {
       super();
@@ -70,27 +70,34 @@ public class EventDispatcher implements Runnable {
     }
   }
 
-  /** The map of listeners.  This is managed by the watcher service*/
+  /**
+   * The map of listeners.  This is managed by the watcher service
+   */
   private final Map<Path, List<WatchEventListener>> listeners;
 
-  /** The working queue. The event queue is drained and all pending events are added in this list */
+  /**
+   * The working queue. The event queue is drained and all pending events are added in this list
+   */
   private final ArrayList<Event> working = new ArrayList<>();
 
-  /** The runnable. */
+  /**
+   * The runnable.
+   */
   private Thread runnable = null;
 
   /**
    * Instantiates a new event dispatcher.
    *
-   * @param listeners
-   *            the listeners
+   * @param listeners the listeners
    */
   public EventDispatcher(Map<Path, List<WatchEventListener>> listeners) {
     super();
     this.listeners = listeners;
   }
 
-  /** The event queue. */
+  /**
+   * The event queue.
+   */
   private final ArrayBlockingQueue<Event> eventQueue = new ArrayBlockingQueue<>(500);
 
   /*
@@ -142,23 +149,19 @@ public class EventDispatcher implements Runnable {
   /**
    * Adds the.
    *
-   * @param event
-   *            the event
-   * @param path
-   *            the path
+   * @param event the event
+   * @param path  the path
    */
   public void add(WatchEvent<Path> event, Path path) {
     eventQueue.offer(new Event(event, path));
   }
 
   /**
-   * Call the listeners.
-   * Listeners are organized per path in a Map. The number of paths is low so a simple iteration should be fast enough.
+   * Call the listeners. Listeners are organized per path in a Map. The number of paths is low so a
+   * simple iteration should be fast enough.
    *
-   * @param event
-   *            the event
-   * @param path
-   *            the path
+   * @param event the event
+   * @param path  the path
    */
   // notify listeners about new event
   private void callListeners(final WatchEvent<?> event, final Path path) {
@@ -178,7 +181,7 @@ public class EventDispatcher implements Runnable {
       }
     }
     if (!matchedOne) {
-      LOGGER.error("No match for  watch event '{}',  path '{}'", event, path);
+      LOGGER.error("No match for  watch event '" + event + "',  path '" + path + "'");
     }
   }
 
@@ -195,8 +198,7 @@ public class EventDispatcher implements Runnable {
   /**
    * Stop.
    *
-   * @throws InterruptedException
-   *             the interrupted exception
+   * @throws InterruptedException the interrupted exception
    */
   public void stop() throws InterruptedException {
     if (runnable != null) {

@@ -26,6 +26,7 @@ import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
 
 import com.github.hbh.hotspeed.watch.WatchEventListener;
 import com.github.hbh.hotspeed.watch.Watcher;
+import com.intellij.openapi.diagnostic.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -46,12 +47,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * NIO2 watcher implementation for systems which support
- * ExtendedWatchEventModifier.FILE_TREE
+ * NIO2 watcher implementation for systems which support ExtendedWatchEventModifier.FILE_TREE
  * <p/>
  * Java 7 (NIO2) watch a directory (or tree) for changes to files.
  * <p/>
@@ -62,7 +60,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractNIO2Watcher implements Watcher {
 
-  protected Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+  protected Logger LOGGER = Logger.getInstance(this.getClass());
 
   protected static final WatchEvent.Kind<?>[] KINDS = new WatchEvent.Kind<?>[] {
     ENTRY_CREATE,
@@ -71,7 +69,7 @@ public abstract class AbstractNIO2Watcher implements Watcher {
   };
 
   protected WatchService watcher;
-  protected final Map<WatchKey, Path> keys;
+
   private final Map<Path, List<WatchEventListener>> listeners = new ConcurrentHashMap<>();
 
   // keep track about which classloader requested which event
@@ -83,6 +81,8 @@ public abstract class AbstractNIO2Watcher implements Watcher {
   private volatile boolean stopped;
 
   protected final EventDispatcher dispatcher;
+
+  protected final Map<WatchKey, Path> keys;
 
   public AbstractNIO2Watcher() throws IOException {
     this.watcher = FileSystems.getDefault().newWatchService();
@@ -109,10 +109,13 @@ public abstract class AbstractNIO2Watcher implements Watcher {
       path = new File(pathPrefix);
     } catch (IllegalArgumentException e) {
       LOGGER.warn(
-        "Unable to watch for path {}, not a local regular file or directory.",
-        pathPrefix
+        String.format(
+          "Unable to watch for path %s, not a local regular file or directory.",
+          pathPrefix
+        ),
+        e
       );
-      LOGGER.trace("Unable to watch for path {} exception", e, pathPrefix);
+
       return;
     }
 
@@ -120,19 +123,19 @@ public abstract class AbstractNIO2Watcher implements Watcher {
       addDirectory(path.toPath());
     } catch (IOException e) {
       LOGGER.warn(
-        "Unable to watch for path {}, not a local regular file or directory.",
-        pathPrefix
+        String.format(
+          "Unable to watch for path %s, not a local regular file or directory.",
+          pathPrefix
+        ),
+        e
       );
-
-      LOGGER.trace("Unable to watch path with prefix '{}' for changes.", e, pathPrefix);
       return;
     }
 
-    List<WatchEventListener> list = listeners.get(Paths.get(pathPrefix));
-    if (list == null) {
-      list = new ArrayList<WatchEventListener>();
-      listeners.put(Paths.get(pathPrefix), list);
-    }
+    List<WatchEventListener> list = listeners.computeIfAbsent(
+      Paths.get(pathPrefix),
+      k -> new ArrayList<WatchEventListener>()
+    );
 
     if (!list.contains(listener)) {
       list.add(listener);
@@ -250,7 +253,7 @@ public abstract class AbstractNIO2Watcher implements Watcher {
     Path dir = keys.get(key);
 
     if (dir == null) {
-      LOGGER.warn("WatchKey '{}' not recognized", key);
+      LOGGER.warn(String.format("WatchKey '%s' not recognized", key));
       return true;
     }
 
@@ -258,7 +261,7 @@ public abstract class AbstractNIO2Watcher implements Watcher {
       WatchEvent.Kind<?> kind = event.kind();
 
       if (kind == OVERFLOW) {
-        LOGGER.warn("WatchKey '{}' overflowed", key);
+        LOGGER.warn(String.format("WatchKey '%s' overflowed", key));
         continue;
       }
 
@@ -279,7 +282,7 @@ public abstract class AbstractNIO2Watcher implements Watcher {
             registerAll(child);
           }
         } catch (IOException x) {
-          LOGGER.warn("Unable to register events for directory {}", x, child);
+          LOGGER.warn(String.format("Unable to register events for directory %s", child));
         }
       }
     }
@@ -287,7 +290,7 @@ public abstract class AbstractNIO2Watcher implements Watcher {
     // reset key and remove from set if directory no longer accessible
     boolean valid = key.reset();
     if (!valid) {
-      LOGGER.warn("Watcher on {} not valid, removing path=", keys.get(key));
+      LOGGER.warn(String.format("Watcher on %s not valid, removing path=", keys.get(key)));
       keys.remove(key);
       // all directories are inaccessible
       if (keys.isEmpty()) {
@@ -334,14 +337,14 @@ public abstract class AbstractNIO2Watcher implements Watcher {
    * Get a Watch event modifier. These are platform specific and hiden in sun api's
    *
    * @see <a href="https://github.com/HotswapProjects/HotswapAgent/issues/41">
-   *      Issue#41</a>
+   * Issue#41</a>
    * @see <a href=
-   *      "http://stackoverflow.com/questions/9588737/is-java-7-watchservice-slow-for-anyone-else">
-   *      Is Java 7 WatchService Slow for Anyone Else?</a>
+   * "http://stackoverflow.com/questions/9588737/is-java-7-watchservice-slow-for-anyone-else"> Is
+   * Java 7 WatchService Slow for Anyone Else?</a>
    */
-  static WatchEvent.Modifier getWatchEventModifier(String claz, String field) {
+  static WatchEvent.Modifier getWatchEventModifier(String clz, String field) {
     try {
-      Class<?> c = Class.forName(claz);
+      Class<?> c = Class.forName(clz);
       Field f = c.getField(field);
       return (WatchEvent.Modifier) f.get(c);
     } catch (Exception e) {

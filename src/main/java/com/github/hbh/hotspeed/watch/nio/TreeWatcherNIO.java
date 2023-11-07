@@ -25,8 +25,8 @@ import java.nio.file.WatchKey;
 
 /**
  * <p>
- * NIO2 watcher implementation for systems which support
- * ExtendedWatchEventModifier.FILE_TREE (windows)
+ * NIO2 watcher implementation for systems which support ExtendedWatchEventModifier.FILE_TREE
+ * (windows)
  * </p>
  * <p>
  * Java 7 (NIO2) watch a directory (or tree) for changes to files.
@@ -49,9 +49,9 @@ public class TreeWatcherNIO extends AbstractNIO2Watcher {
       getWatchEventModifier("com.sun.nio.file.ExtendedWatchEventModifier", "FILE_TREE");
 
     if (FILE_TREE != null) {
-      MODIFIERS = new WatchEvent.Modifier[] { FILE_TREE, HIGH };
+      MODIFIERS = new WatchEvent.Modifier[]{FILE_TREE, HIGH};
     } else {
-      MODIFIERS = new WatchEvent.Modifier[] { HIGH };
+      MODIFIERS = new WatchEvent.Modifier[]{HIGH};
     }
   }
 
@@ -94,15 +94,15 @@ public class TreeWatcherNIO extends AbstractNIO2Watcher {
   }
 
   /**
-   * Register the given directory,  with the
-   * WatchService. Sub-directories are automatically watched (filesystem supported)
+   * Register the given directory,  with the WatchService. Sub-directories are automatically watched
+   * (filesystem supported)
    *
    * @param dir the dir
    * @throws IOException Signals that an I/O exception has occurred.
    */
   @Override
   protected void registerAll(Path dir) throws IOException {
-    LOGGER.info("Registering directory {} ", dir);
+    LOGGER.info("Registering directory  " + dir);
     register(dir);
   }
 }

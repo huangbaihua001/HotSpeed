@@ -29,5 +29,5 @@ public interface WatchEventListener {
    *
    * @param event event type and file URI.
    */
-  public void onEvent(WatchFileEvent event);
+  void onEvent(WatchFileEvent event);
 }
