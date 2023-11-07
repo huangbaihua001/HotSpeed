@@ -1,18 +1,26 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>com.github.huangbaihua001.hotspeed</id>
-    <name>HotSpeed Template</name>
-    <vendor>huangbaihua001</vendor>
+  <id>com.github.huangbaihua001.hotspeed</id>
+  <name>HotSpeed Template</name>
+  <vendor>huangbaihua001</vendor>
 
-    <depends>com.intellij.modules.platform</depends>
+  <depends>com.intellij.modules.platform</depends>
 
-    <resource-bundle>messages.MyBundle</resource-bundle>
 
-    <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.hbh.hotspeed.HotSpeedToolWindowsFactory" id="HotSpeedToolWindow"/>
-    </extensions>
+  <depends optional="true" config-file="action-group.xml">com.intellij.modules.lang</depends>
+  <depends optional="true" config-file="java.xml">com.intellij.java</depends>
 
-    <applicationListeners>
-        <listener class="com.github.huangbaihua001.hotspeed.listeners.MyApplicationActivationListener" topic="com.intellij.openapi.application.ApplicationActivationListener"/>
-    </applicationListeners>
+  <resource-bundle>messages.MyBundle</resource-bundle>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <toolWindow anchor="bottom" factoryClass="com.github.hbh.hotspeed.HotSpeedToolWindowsFactory"
+      id="HotSpeedToolWindow"/>
+  </extensions>
+
+
+
+  <applicationListeners>
+    <listener class="com.github.huangbaihua001.hotspeed.listeners.MyApplicationActivationListener"
+      topic="com.intellij.openapi.application.ApplicationActivationListener"/>
+  </applicationListeners>
 </idea-plugin>

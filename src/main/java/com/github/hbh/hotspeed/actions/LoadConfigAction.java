@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public class LoadConfigAction extends AnAction {
 
   public LoadConfigAction() {
-    super("Settings", "Change default settings", HotSpeedPluginIcons.SETTING_ICON);
+    super("Plugin Preference", "HotSpeed plugin preferences page", HotSpeedPluginIcons.SETTING_ICON);
   }
 
   @Override

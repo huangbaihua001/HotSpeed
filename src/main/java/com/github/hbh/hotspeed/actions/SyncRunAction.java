@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public class SyncRunAction extends AnAction {
 
   public SyncRunAction() {
-    super("Sync", "Sync changed code", HotSpeedPluginIcons.PLAY_ICON);
+    super("Sync Changed Code", "Sync changed code", HotSpeedPluginIcons.PLAY_ICON);
   }
 
   @Override
